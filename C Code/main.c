@@ -6,6 +6,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "sys/alt_alarm.h"
+#include "Mode1.c"
 
 // Example timeout values in milliseconds 
 #define AVI_VALUE 300 
@@ -17,6 +18,8 @@
 
 //Global Variables
 int currentMode = 0;
+int ticks_per_second = alt_ticks_per_second();
+int AVI_ticks = 0;
 
 int switch_check() {
 	/* Checks State of Switches and Updates Modes Accordingly
@@ -47,6 +50,10 @@ int switch_check() {
 int main(void) {
 	while (1) {
 		switch_check();
+		//Start AVI
+		//Get number of ticks at AVI start
+		//if number of ticks = number at AVI start + AVI timeout value
+		//set AVI_ex
 	}
 	return 0;
 }
