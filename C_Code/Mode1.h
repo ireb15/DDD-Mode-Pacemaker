@@ -1,41 +1,42 @@
-#ifndef MODE1_H_ 
-#define MODE1_H_ 
+#ifndef MODE1_H_
+#define MODE1_H_
 
 // Functions
-void reset(); 
-void tick(); 
+void reset();
+void tick();
 
 // Inputs
-extern char VSense; 
-extern char ASense;
+ char VSense;
+ char ASense;
+ char init_var;
 
 // Timer Signals
-extern char AVI_ex;
-extern char AVI_start;
-extern char AVI_stop;
-extern char VRP_ex;
-extern char VRP_start;
-extern char VRP_stop;
-extern char LRI_ex;
-extern char LRI_start;
-extern char LRI_stop;
-extern char VRP_ex;
-extern char VRP_start;
-extern char VRP_stop;
-extern char PVARP_ex;
-extern char PVARP_start;
-extern char PVARP_stop;
-extern char AEI_ex;
-extern char AEI_start;
-extern char AEI_stop;
-extern char URI_ex;
-extern char URI_start;
-extern char URI_stop;
+ char AVI_ex;
+ char AVI_start;
+ char AVI_stop;
+ char VRP_ex;
+ char VRP_start;
+ char VRP_stop;
+ char LRI_ex;
+ char LRI_start;
+ char LRI_stop;
+ char VRP_ex;
+ char VRP_start;
+ char VRP_stop;
+ char PVARP_ex;
+ char PVARP_start;
+ char PVARP_stop;
+ char AEI_ex;
+ char AEI_start;
+ char AEI_stop;
+ char URI_ex;
+ char URI_start;
+ char URI_stop;
 
 
 
 // Outputs
-extern char VPace;
-extern char APace; 
+ char VPace;
+ char APace;
 
 #endif/* MODE1_H_ */
