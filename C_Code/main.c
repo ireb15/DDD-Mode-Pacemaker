@@ -42,32 +42,32 @@ alt_alarm PVARP_timer;
 alt_alarm VRP_timer;
 
 alt_u32 AVI_timer_ISR(void* context) {
-	AVI_ex = 1;
+	in_AVI_ex = 1;
 	return 0;
 }
 
 alt_u32 AEI_timer_ISR(void* context) {
-	AEI_ex = 1;
+	in_AEI_ex = 1;
 	return 0;
 }
 
 alt_u32 LRI_timer_ISR(void* context) {
-	LRI_ex = 1;
+	in_LRI_ex = 1;
 	return 0;
 }
 
 alt_u32 URI_timer_ISR(void* context) {
-	URI_ex = 1;
+	in_URI_ex = 1;
 	return 0;
 }
 
 alt_u32 PVARP_timer_ISR(void* context) {
-	PVARP_ex = 1;
+	in_PVARP_ex = 1;
 	return 0;
 }
 
 alt_u32 VRP_timer_ISR(void* context) {
-	VRP_ex = 1;
+	in_VRP_ex = 1;
 	return 0;
 }
 
@@ -124,64 +124,64 @@ int switch_check() {
 
 int timer_handler() {
 		//Check Start
-		if (AVI_start) {
+		if (in_AVI_start) {
 			printf("AVI_start");
 			//Start AVI timer interrupt
 			alt_alarm_start(&AVI_timer, AVI_VALUE, AVI_timer_ISR, NULL);
 		}
-		if (PVARP_start) {
+		if (in_PVARP_start) {
 			printf("PVARP_start");
 			//Start PVARP timer interrupt
 			alt_alarm_start(&PVARP_timer, PVARP_VALUE, PVARP_timer_ISR, NULL);
 		}
-		if (AEI_start) {
+		if (in_AEI_start) {
 			printf("AEI_start");
 			//Start AEI timer interrupt
 			alt_alarm_start(&AEI_timer, AEI_VALUE, AEI_timer_ISR, NULL);
 		}
-		if (VRP_start) {
+		if (in_VRP_start) {
 			printf("VRP_start");
 			//Start PVARP timer interrupt
 			alt_alarm_start(&VRP_timer, VRP_VALUE, VRP_timer_ISR, NULL);
 		}
-		if (LRI_start) {
+		if (in_LRI_start) {
 			printf("LRI_start");
 			//Start LRI timer interrupt
 			alt_alarm_start(&LRI_timer, LRI_VALUE, LRI_timer_ISR, NULL);
 		}
-		if (URI_start) {
+		if (in_URI_start) {
 			printf("URI_start");
 			//Start PVARP timer interrupt
 			alt_alarm_start(&URI_timer, URI_VALUE, URI_timer_ISR, NULL);
 		}
 
 		//Check Stop
-		if (AVI_stop) {
+		if (in_AVI_stop) {
 			printf("AVI_Stop");
 			//Start AVI timer interrupt
 			alt_alarm_stop(&AVI_timer);
 		}
-		if (PVARP_stop) {
+		if (in_PVARP_stop) {
 			printf("PVARP_Stop");
 			//Start PVARP timer interrupt
 			alt_alarm_stop(&PVARP_timer);
 		}
-		if (AEI_stop) {
+		if (in_AEI_stop) {
 			printf("AEI_Stop");
 			//Start AEI timer interrupt
 			alt_alarm_stop(&AEI_timer);
 		}
-		if (VRP_stop) {
+		if (in_VRP_stop) {
 			printf("VRP_Stop");
 			//Start VRP timer interrupt
 			alt_alarm_stop(&VRP_timer);
 		}
-		if (LRI_stop) {
+		if (in_LRI_stop) {
 			printf("LRI_Stop");
 			//Start LRI timer interrupt
 			alt_alarm_stop(&LRI_timer);
 		}
-		if (URI_stop) {
+		if (in_URI_stop) {
 			printf("URI_Stop");
 			//Start PVARP timer interrupt
 			alt_alarm_stop(&URI_timer);
