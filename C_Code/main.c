@@ -136,7 +136,6 @@ int switch_check() {
 
 
 int timer_handler() {
-
 		if (AVI_start) {
 			printf("AVI_start\n");
 			//Start AVI timer interrupt
@@ -227,6 +226,7 @@ int setLights() {
 }
 
 int main(void) {
+	tick();
 	//Initialize with AVI timer
 	reset();
 	VSense = 1;
