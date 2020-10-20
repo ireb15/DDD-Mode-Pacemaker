@@ -2,28 +2,20 @@
 scchart Mode1 {
   input signal VSense, ASense;
   output signal VPace, APace;
+  output signal LRI_start, LRI_ex, LRI_stop;
+  output signal URI_start, URI_ex, URI_stop;
+  output signal VRP_start, VRP_stop, VRP_ex;
+  output signal AVI_start, AVI_stop, AVI_ex;
+  output signal AEI_start, AEI_stop, AEI_ex;
+  output signal PVARP_start, PVARP_stop, PVARP_ex;
 
   initial state top {
-    signal LRI_start, LRI_ex, LRI_stop;
-    signal URI_start, URI_ex, URI_stop;
-    signal VRP_start, VRP_stop, VRP_ex;
-    signal AVI_start, AVI_stop, AVI_ex;
-    signal AEI_start, AEI_stop, AEI_ex;
-    signal PVARP_start, PVARP_stop, PVARP_ex;
-    
-    int AVI_active;
-    int AEI_active;
-    int VRP_active;
-    int PVARP_active;
-    int LRI_active;
-    int URI_active;
-    
 
     region LRI:
 
     initial state init
-    --> waitVRP with VSense / LRI_start //connector state commit1 --> waitVRP immediate with /LRI_start;
-    --> waitVRP with VPace / LRI_start;
+    --> waitVRP with VSense / LRI_start; //connector state commit1 --> waitVRP immediate with /LRI_start;
+
 
     state waitVRP
     --> waitLRI with VRP_ex;
@@ -38,8 +30,8 @@ scchart Mode1 {
     region URI:
 
     initial state init
-    --> waitURI with VSense / URI_start //connector state commit1 --> waitVRP immediate with /LRI_start;
-    --> waitURI with VPace / URI_start;
+    --> waitURI with VSense / URI_start; //connector state commit1 --> waitVRP immediate with /LRI_start;
+
 
     state waitURI
     --> init with URI_ex / URI_stop;
@@ -47,20 +39,20 @@ scchart Mode1 {
     region LRI_timer:
 
     initial state idle
-    --> timer with LRI_start / LRI_active = 1;
+    --> timer with LRI_start;
 
     state timer "timer"
-    --> idle with LRI_stop / LRI_active = 0
-    --> idle with LRI_ex / LRI_active = 0;
+    --> idle with LRI_stop
+    --> idle with LRI_ex;
 
     region URI_timer:
 
     initial state idle
-    --> timer with URI_start / URI_active = 1;
+    --> timer with URI_start;
 
     state timer "timer"
-    --> idle with URI_stop / URI_active = 0
-    --> idle with URI_ex / URI_active = 0;
+    --> idle with URI_stop
+    --> idle with URI_ex;
 
     region VRP:
 
@@ -81,19 +73,16 @@ scchart Mode1 {
     region VRP_timer:
 
     initial state idle
-    --> timer with VRP_start / VRP_active = 1;
+    --> timer with VRP_start;
 
     state timer "timer"
-    --> idle with VRP_ex / VRP_active = 0;
+    --> idle with VRP_ex
+    --> idle with VRP_stop;
 
     region AVI:
 
     initial state idle
-    --> waitA with PVARP_ex;
-
-    state waitA
-    --> waitAVI with ASense / AVI_start
-    --> waitAVI with APace / AVI_start;
+    --> waitAVI with ASense / AVI_start;
 
     state waitAVI
     --> idle with VSense / AVI_stop
@@ -105,39 +94,36 @@ scchart Mode1 {
     region AVI_timer:
 
     initial state idle
-    --> timer with AVI_start / AVI_active = 1;
+    --> timer with AVI_start;
 
     state timer "timer"
-    --> idle with AVI_ex / AVI_active = 0;
+    --> idle with AVI_ex
+    --> idle with AVI_stop;
 
-    region AEI: //Needs to wait PVARP before WaitAEI
-
+    region AEI:
 
     initial state idle
-    --> waitPVARP with VSense / AEI_start
-    --> waitPVARP with VPace / AEI_start;
-
-    state waitPVARP
-    --> waitAEI with PVARP_ex;
+    --> waitAEI with VSense / AEI_start;
 
     state waitAEI
-    --> idle with ASense / AEI_stop
-    --> idle with AEI_ex / APace;
+    --> waitPVARP with ASense / AVI_stop
+    --> waitPVARP with AEI_ex / APace;
+
+    state waitPVARP
+    --> idle with PVARP_ex;
 
     region AEI_timer:
 
     initial state idle
-    --> timer with AEI_start / AEI_active = 1;
+    --> timer with AEI_start;
 
     state timer "timer"
-    --> idle with AEI_ex / AEI_active = 0;
+    --> idle with AEI_ex
+    --> idle with AEI_stop;
 
     region PVARP:
 
     initial state idle
-    --> waitV with VRP_ex;
-
-    state waitV
     --> waitPVARP with VSense / PVARP_start
     --> waitPVARP with VPace / PVARP_start;
 
@@ -147,9 +133,10 @@ scchart Mode1 {
     region PVARP_timer:
 
     initial state idle
-    --> timer with PVARP_start / PVARP_active = 1;
+    --> timer with PVARP_start;
 
     state timer "timer"
-    --> idle with PVARP_ex / PVARP_active = 0;
+    --> idle with PVARP_ex
+    --> idle with PVARP_stop;
   };
 }
