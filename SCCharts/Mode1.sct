@@ -2,19 +2,20 @@
 scchart Mode1 {
   input signal VSense, ASense;
   output signal VPace, APace;
-  output signal LRI_start, LRI_ex, LRI_stop;
-  output signal URI_start, URI_ex, URI_stop;
-  output signal VRP_start, VRP_stop, VRP_ex;
-  output signal AVI_start, AVI_stop, AVI_ex;
-  output signal AEI_start, AEI_stop, AEI_ex;
-  output signal PVARP_start, PVARP_stop, PVARP_ex;
+  output signal LRI_start, LRI_stop;
+  output signal URI_start, URI_stop;
+  output signal VRP_start, VRP_stop;
+  output signal AVI_start, AVI_stop;
+  output signal AEI_start, AEI_stop;
+  output signal PVARP_start, PVARP_stop;
+  input signal AVI_ex, AEI_ex, PVARP_ex, VRP_ex, URI_ex, LRI_ex;
 
   initial state top {
 
     region LRI:
 
     initial state init
-    --> waitVRP with VSense / LRI_start; //connector state commit1 --> waitVRP immediate with /LRI_start;
+    --> waitVRP with VSense / LRI_start;
 
 
     state waitVRP
@@ -30,8 +31,8 @@ scchart Mode1 {
     region URI:
 
     initial state init
-    --> waitURI with VSense / URI_start; //connector state commit1 --> waitVRP immediate with /LRI_start;
-
+    --> waitURI with VSense / URI_start
+	--> waitURI with VPace / URI_start;
 
     state waitURI
     --> init with URI_ex / URI_stop;
@@ -57,18 +58,11 @@ scchart Mode1 {
     region VRP:
 
     initial state idle
-    --> comit1 with VSense
-    --> comit1 with VPace;
-
-    connector state comit1
-    --> waitVRP immediate with / VRP_start;
+    --> waitVRP with VPace / VRP_start
+    --> waitVRP with VSense / VRP_start;
 
     state waitVRP
-    --> idle with VRP_ex
-    --> comit2 with VSense;
-
-    connector state comit2
-    --> waitVRP immediate;
+    --> idle with VRP_ex;
 
     region VRP_timer:
 
@@ -82,14 +76,24 @@ scchart Mode1 {
     region AVI:
 
     initial state idle
-    --> waitAVI with ASense / AVI_start;
+    --> waitAVI with ASense / AVI_start
+    --> waitAVI with APace / AVI_start;
 
     state waitAVI
     --> idle with VSense / AVI_stop
-    --> extend with AVI_ex;
+    --> idle with VPace / AVI_stop
+    --> e1 with AVI_ex
+    --> e2 with URI_ex;
 
-    state extend
-    --> idle with URI_ex / VPace;
+    state e1
+    --> idle with URI_ex / VPace
+    --> idle with VSense / AVI_stop
+    --> idle with VPace / AVI_stop;
+    
+    state e2
+    -->idle with AVI_ex /VPace
+    -->idle with VSense / AVI_stop
+    -->idle with VPace / AVI_stop;
 
     region AVI_timer:
 
@@ -103,10 +107,11 @@ scchart Mode1 {
     region AEI:
 
     initial state idle
-    --> waitAEI with VSense / AEI_start;
+    --> waitAEI with VSense / AEI_start
+    --> waitAEI with VPace / AEI_start;
 
     state waitAEI
-    --> waitPVARP with ASense / AVI_stop
+    --> waitPVARP with ASense / AEI_stop
     --> waitPVARP with AEI_ex / APace;
 
     state waitPVARP
