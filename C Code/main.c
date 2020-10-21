@@ -10,6 +10,7 @@
 #include "sccharts.h"
 #include "fcntl.h"
 
+// SCCharts Functions VOID and TICK
 void reset() {
 	_GO = 1;
 	_PRE_GO = 0;
@@ -452,24 +453,24 @@ void tick() {
 #define LRI_VALUE 950
 #define URI_VALUE 900
 
+// LCD Codes to Clear Screen
 #define ESC 27
 #define CLEAR_LCD_STRING "[2J"
 
-//LED CONFIG
+// LED CONFIGS
 #define APACE_LED 0x8
 #define VPACE_LED 0X4
 #define ASENSE_LED 0X2
 #define VSENSE_LED 0x1
 #define LED_TIMEOUT 50
 
-//Global Variables
-int currentMode = 0;
-int prevMode = 0;
-int AVI_ticks = 0;
-int buttonValue = 1;
-char *buffer;
+// Global Variables
+int currentMode = 0;	// Current Mode (Buttons/UART)
+int prevMode = 0;		// Previous Mode (To detect Mode Change)
+int buttonValue = 1;	// Value used for Polling Buttons
+char *buffer;			// Buffer for character Read/Write via UART
 
-//Timers
+// SCCharts Timers
 alt_alarm AVI_timer;
 alt_alarm AEI_timer;
 alt_alarm LRI_timer;
@@ -477,11 +478,14 @@ alt_alarm URI_timer;
 alt_alarm PVARP_timer;
 alt_alarm VRP_timer;
 
-//Input Flags
-//So Inputs won't change mid-tick
+// Input Flags
+// Set by Button and UART Input
+// Set to SCCharts signals once per tick
 int VSense_flag = 0;
 int ASense_flag = 0;
-//Timer_ex_flag:
+// Timer_ex_flags:
+// Set by Interrupts
+// Set to SCCharts signals once per tick
 int AVI_ex_flag = 0;
 int AEI_ex_flag = 0;
 int LRI_ex_flag = 0;
@@ -489,13 +493,18 @@ int URI_ex_flag = 0;
 int PVARP_ex_flag = 0;
 int VRP_ex_flag = 0;
 
-//Tick counts
+// Tick counts
+// Used for button cool-down timer, where extra inputs are ignored
 int count1;
 int count2;
+// Ticks per second recorded here (Ticks per 10ms)
 int tps;
-
+// UART File description
 int fd;
 
+// UART Receive
+// Reads buffer and sets signals
+// Based on V or A char input
 void UART_receiver() {
 	read(fd, buffer, 1);
 	if (*buffer == 'V') {
@@ -507,6 +516,8 @@ void UART_receiver() {
 	return;
 }
 
+// UART Send
+// Reads Signals and writes to buffer
 void UART_send() {
 	if (VPace == 1) {
 		*buffer = 'V';
@@ -518,53 +529,43 @@ void UART_send() {
 	return;
 }
 
+// Timer ISRS
+// Timer_ex flags set here
+// Written to SCCHarts Signals before tick
 alt_u32 AVI_timer_ISR(void* context) {
 	AVI_ex_flag = 1;
-	printf("AVI expired\n");
 	return 0;
 }
 
 alt_u32 AEI_timer_ISR(void* context) {
 	AEI_ex_flag = 1;
-	printf("AEI expired\n");
 	return 0;
 }
 
 alt_u32 LRI_timer_ISR(void* context) {
 	LRI_ex_flag = 1;
-	printf("LRI expired\n");
 	return 0;
 }
 
 alt_u32 URI_timer_ISR(void* context) {
 	URI_ex_flag = 1;
-	printf("URI expired\n");
 	return 0;
 }
 
 alt_u32 PVARP_timer_ISR(void* context) {
 	PVARP_ex_flag = 1;
-	printf("PVARP expired\n");
 	return 0;
 }
 
 alt_u32 VRP_timer_ISR(void* context) {
 	VRP_ex_flag = 1;
-	printf("VRP expired\n");
 	return 0;
 }
 
-/*void buttons_isr(void* context, alt_u32 id) {
- unsigned int temp = IORD_ALTERA_AVALON_PIO_EDGE_CAP(BUTTONS_BASE);
- IOWR_ALTERA_AVALON_PIO_EDGE_CAP(BUTTONS_BASE, 0);
- if (temp == 1) {
- VSense_flag = 1;
- } else if (temp == 2) {
- ASense_flag = 1;
- }
- return;
- }*/
-
+// Button Polling
+// Polls Button inputs
+// Sets ASense and VSense flags from Inputs
+// Written to SCCHarts Signals before tick
 void poll_buttons() {
 	unsigned int buttonValue = 0;
 	// Fetch button inputs
@@ -574,14 +575,9 @@ void poll_buttons() {
 	return;
 }
 
-/*void init_buttons_pio() {
- void* context_to_be_passed = (void*) &buttonValue;
- IOWR_ALTERA_AVALON_PIO_EDGE_CAP(BUTTONS_BASE, 0);
- IOWR_ALTERA_AVALON_PIO_IRQ_MASK(BUTTONS_BASE, 0x7);
- alt_irq_register(BUTTONS_IRQ, context_to_be_passed, buttons_isr);
- return;
- }*/
-
+// LCD Update
+// Opens LCD Port
+// Writes to LCD based on Current Mode
 int lcd_update(int mode) {
 	FILE *lcd;
 	lcd = fopen(LCD_NAME, "w");
@@ -594,6 +590,8 @@ int lcd_update(int mode) {
 	return 0;
 }
 
+// Switch Polling
+// Gets Mode based on Switch State
 int switch_check() {
 	/* Checks State of Switches and Updates Modes Accordingly */
 	int mode = IORD_ALTERA_AVALON_PIO_DATA(SWITCHES_BASE);
@@ -612,37 +610,33 @@ int switch_check() {
 	return 0;
 }
 
+// Timer Handler
+// Starts and Stops Timers based on SCCHarts Signals
 int timer_handler() {
 	if (AVI_start) {
 		//Start AVI timer interrupt
 		alt_alarm_start(&AVI_timer, AVI_VALUE, AVI_timer_ISR, NULL);
-		printf("AVI start\n");
 
 	}
 	if (PVARP_start) {
 		//Start PVARP timer interrupt
 		alt_alarm_start(&PVARP_timer, PVARP_VALUE, PVARP_timer_ISR, NULL);
-		printf("PVARP start\n");
 	}
 	if (AEI_start) {
 		//Start AEI timer interrupt
 		alt_alarm_start(&AEI_timer, AEI_VALUE, AEI_timer_ISR, NULL);
-		printf("AEI start\n");
 	}
 	if (VRP_start) {
 		//Start PVARP timer interrupt
 		alt_alarm_start(&VRP_timer, VRP_VALUE, VRP_timer_ISR, NULL);
-		printf("VRP start\n");
 	}
 	if (LRI_start) {
 		//Start LRI timer interrupt
 		alt_alarm_start(&LRI_timer, LRI_VALUE, LRI_timer_ISR, NULL);
-		printf("LRI start\n");
 	}
 	if (URI_start) {
 		//Start PVARP timer interrupt
 		alt_alarm_start(&URI_timer, URI_VALUE, URI_timer_ISR, NULL);
-		printf("URI start\n");
 	}
 
 	//Check Stop
@@ -673,30 +667,32 @@ int timer_handler() {
 	return 0;
 }
 
+// Lights Handler
+// Sets lights based on SCCharts Signals
 int setLights() {
-	//Thinking about adding a timer to handle extending LED on duration
 	if (APace) {
 		IOWR_ALTERA_AVALON_PIO_DATA(LEDS_GREEN_BASE, APACE_LED);
-		printf("APace\n\n");
 	} else if (VPace) {
 		IOWR_ALTERA_AVALON_PIO_DATA(LEDS_GREEN_BASE, VPACE_LED);
-		printf("VPace\n\n");
 	} else if (ASense) {
 		IOWR_ALTERA_AVALON_PIO_DATA(LEDS_GREEN_BASE, ASENSE_LED);
-		printf("ASense\n\n");
 	} else if (VSense) {
 		IOWR_ALTERA_AVALON_PIO_DATA(LEDS_GREEN_BASE, VSENSE_LED);
-		printf("VSense\n\n");
 	} else {
 		IOWR_ALTERA_AVALON_PIO_DATA(LEDS_GREEN_BASE, 0);
 	}
 	return 0;
 }
 
+// Flags Handler
+// Writes Flags to SCCHart Signals
 int setFlags() {
-	count2 = alt_nticks();
+	// Writes Button Flags only after 10 ms have based since last button press
+	count2 = alt_nticks(); // Get Current Tick Count
 	if (currentMode == 1) {
-		if (count2 / tps > count1 / tps + 0.0001) {
+		if ((count2 / tps) + 1 > (count1 / tps) + 1) {
+			// Check if 10ms has passed since last press
+			// Update Tick counts
 			count1 = alt_nticks();
 			VSense = VSense_flag;
 			ASense = ASense_flag;
@@ -706,13 +702,15 @@ int setFlags() {
 		ASense = ASense_flag;
 	}
 
-	//Timer_ex_flag:
+	// Timer_ex_flags:
 	AVI_ex = AVI_ex_flag;
 	AEI_ex = AEI_ex_flag;
 	LRI_ex = LRI_ex_flag;
 	URI_ex = URI_ex_flag;
 	PVARP_ex = PVARP_ex_flag;
 	VRP_ex = VRP_ex_flag;
+
+	// Clear Flags After SCCHarts Signals Set
 	VSense_flag = 0;
 	ASense_flag = 0;
 	AVI_ex_flag = 0;
@@ -724,7 +722,10 @@ int setFlags() {
 	return 0;
 }
 
-int clearFlags() {
+// Clear SCCharts Signals
+// Signals remain high unless cleared
+// Clear all signals after tick
+int clearSignals() {
 	VSense = 0;
 	ASense = 0;
 	AVI_ex = 0;
@@ -737,10 +738,14 @@ int clearFlags() {
 }
 
 int main(void) {
+	// Initialize Values
+	// Get Initial Tick Count
 	count1 = alt_nticks();
-	tps = alt_ticks_per_second();
-	//init_buttons_pio();
+	// Ticks per 10 ms
+	tps = alt_ticks_per_second() / 100;
+	// Open UART Port (Non blocking)
 	fd = open(UART_NAME, O_NONBLOCK | O_RDWR);
+	// Start SCCHarts Logic
 	reset();
 	tick();
 	while (1) {
@@ -767,7 +772,7 @@ int main(void) {
 			UART_send();
 		}
 		// Clear Inputs
-		clearFlags();
+		clearSignals();
 	}
 	return 0;
 }
