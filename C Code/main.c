@@ -8,377 +8,449 @@
 #include "sys/alt_alarm.h"
 #include "mode1.h"
 #include "sccharts.h"
+#include "fcntl.h"
 
-void reset(){
-   _GO = 1;
-   _PRE_GO = 0;
-   PRE_g3 = 0;
-   PRE_g6 = 0;
-   PRE_g8 = 0;
-   PRE_g11 = 0;
-   PRE_g17 = 0;
-   PRE_g20 = 0;
-   PRE_g27 = 0;
-   PRE_g29 = 0;
-   PRE_g34 = 0;
-   PRE_g36 = 0;
-   PRE_g41 = 0;
-   PRE_g44 = 0;
-   PRE_g50 = 0;
-   PRE_g52 = 0;
-   PRE_g57 = 0;
-   PRE_g60 = 0;
-   PRE_g66 = 0;
-   PRE_g74 = 0;
-   PRE_g85 = 0;
-   PRE_g87 = 0;
-   PRE_g92 = 0;
-   PRE_g95 = 0;
-   PRE_g98 = 0;
-   PRE_g106 = 0;
-   PRE_g108 = 0;
-   PRE_g113 = 0;
-   PRE_g116 = 0;
-   PRE_g122 = 0;
-   PRE_g124 = 0;
-   PRE_g130 = 0;
-   return;
+void reset() {
+	_GO = 1;
+	_PRE_GO = 0;
+	PRE_g3 = 0;
+	PRE_g6 = 0;
+	PRE_g8 = 0;
+	PRE_g11 = 0;
+	PRE_g21 = 0;
+	PRE_g24 = 0;
+	PRE_g28 = 0;
+	PRE_g33 = 0;
+	PRE_g35 = 0;
+	PRE_g46 = 0;
+	PRE_g48 = 0;
+	PRE_g53 = 0;
+	PRE_g55 = 0;
+	PRE_g60 = 0;
+	PRE_g63 = 0;
+	PRE_g69 = 0;
+	PRE_g71 = 0;
+	PRE_g76 = 0;
+	PRE_g79 = 0;
+	PRE_g85 = 0;
+	PRE_g93 = 0;
+	PRE_g104 = 0;
+	PRE_g106 = 0;
+	PRE_g111 = 0;
+	PRE_g114 = 0;
+	PRE_g116 = 0;
+	PRE_g125 = 0;
+	PRE_g127 = 0;
+	PRE_g132 = 0;
+	PRE_g135 = 0;
+	PRE_g141 = 0;
+	PRE_g143 = 0;
+	PRE_g149 = 0;
+	return;
 }
-void tick(){
-   if(_PRE_GO == 1){
-      _GO = 0;
-   }
-   {
-      g0 = _GO;
-      g1 = g0;
-      g2 = g1;
-      g4 =(PRE_g3);
-      _cg4 = VSense;
-      g3 =((g4&&(!(_cg4)))||g2);
-      g131 =(PRE_g130);
-      g129 = g0;
-      g130 =(g131||g129);
-      if(g130){
-         VPace = 0;
-         APace = 0;
-         LRI_start = 0;
-         LRI_stop = 0;
-         URI_start = 0;
-         URI_stop = 0;
-         VRP_start = 0;
-         VRP_stop = 0;
-         AVI_start = 0;
-         AVI_stop = 0;
-         AEI_start = 0;
-         AEI_stop = 0;
-         PVARP_start = 0;
-         PVARP_stop = 0;
-      }
-      g5 =(g4&&_cg4);
-      if(g5){
-         LRI_start =(LRI_start||1);
-      }
-      g7 =(PRE_g6);
-      _cg7 = VRP_ex;
-      g12 =(PRE_g11);
-      g12b = g12;
-      if(g12b){
-         LRI_start =(LRI_start||1);
-      }
-      g6 =((g7&&(!(_cg7)))||g5||g12b);
-      g9 =(PRE_g8);
-      _cg9 = VSense;
-      g13 =(g9&&(!(_cg9)));
-      _cg13 = LRI_ex;
-      g8 =((g13&&(!(_cg13)))||(g7&&_cg7));
-      g10 =(g9&&_cg9);
-      if(g10){
-         LRI_stop =(LRI_stop||1);
-      }
-      g14 =(g13&&_cg13);
-      if(g14){
-         VPace =(VPace||1);
-      }
-      g11 =(g14||g10);
-      g16 = g1;
-      g67 =(PRE_g66);
-      _cg67 = URI_ex;
-      g68 =(g67&&_cg67);
-      if(g68){
-         VPace =(VPace||1);
-      }
-      g75 =(PRE_g74);
-      _cg75 = AVI_ex;
-      g76 =(g75&&_cg75);
-      if(g76){
-         VPace =(VPace||1);
-      }
-      g18 =(PRE_g17);
-      _cg18 = VSense;
-      g23 =(g18&&(!(_cg18)));
-      _cg23 = VPace;
-      g21 =(PRE_g20);
-      _cg21 = URI_ex;
-      g22 =(g21&&_cg21);
-      if(g22){
-         URI_stop =(URI_stop||1);
-      }
-      g17 =((g23&&(!(_cg23)))||g22||g16);
-      g19 =(g18&&_cg18);
-      if(g19){
-         URI_start =(URI_start||1);
-      }
-      g24 =(g23&&_cg23);
-      if(g24){
-         URI_start =(URI_start||1);
-      }
-      g20 =((g21&&(!(_cg21)))||g24||g19);
-      g26 = g1;
-      g28 =(PRE_g27);
-      g28b = g28;
-      _cg28 = LRI_start;
-      g30 =(PRE_g29);
-      g30b = g30;
-      _cg30 = LRI_stop;
-      g31 =(g30b&&(!(_cg30)));
-      _cg31 = LRI_ex;
-      g27 =((g28b&&(!(_cg28)))||g26||(g30b&&_cg30)||(g31&&_cg31));
-      g29 =((g28b&&_cg28)||(g31&&(!(_cg31))));
-      g33 = g1;
-      g37 =(PRE_g36);
-      g37b = g37;
-      _cg37 = URI_stop;
-      g38 =(g37b&&(!(_cg37)));
-      _cg38 = URI_ex;
-      g35 =(PRE_g34);
-      g35b = g35;
-      _cg35 = URI_start;
-      g34 =(g33||(g38&&_cg38)||(g35b&&(!(_cg35)))||(g37b&&_cg37));
-      g36 =((g35b&&_cg35)||(g38&&(!(_cg38))));
-      g40 = g1;
-      g45 =(PRE_g44);
-      _cg45 = VRP_ex;
-      g42 =(PRE_g41);
-      g42b = g42;
-      _cg42 = VPace;
-      g46 =(g42b&&(!(_cg42)));
-      _cg46 = VSense;
-      g41 =((g45&&_cg45)||(g46&&(!(_cg46)))||g40);
-      g43 =(g42b&&_cg42);
-      if(g43){
-         VRP_start =(VRP_start||1);
-      }
-      g47 =(g46&&_cg46);
-      if(g47){
-         VRP_start =(VRP_start||1);
-      }
-      g44 =(g43||(g45&&(!(_cg45)))||g47);
-      g49 = g1;
-      g53 =(PRE_g52);
-      _cg53 = VRP_ex;
-      g54 =(g53&&(!(_cg53)));
-      _cg54 = VRP_stop;
-      g51 =(PRE_g50);
-      g51b = g51;
-      _cg51 = VRP_start;
-      g50 =((g53&&_cg53)||(g54&&_cg54)||g49||(g51b&&(!(_cg51))));
-      g52 =((g51b&&_cg51)||(g54&&(!(_cg54))));
-      g56 = g1;
-      g61 =(PRE_g60);
-      _cg61 = VSense;
-      g63 =(g61&&(!(_cg61)));
-      _cg63 = VPace;
-      g64 =(g63&&_cg63);
-      if(g64){
-         AVI_stop =(AVI_stop||1);
-      }
-      g96 =(PRE_g95);
-      _cg96 = ASense;
-      g100 =(g96&&(!(_cg96)));
-      _cg100 = AEI_ex;
-      g101 =(g100&&_cg100);
-      if(g101){
-         APace =(APace||1);
-      }
-      g58 =(PRE_g57);
-      _cg58 = ASense;
-      g81 =(g58&&(!(_cg58)));
-      _cg81 = APace;
-      g77 =(g75&&(!(_cg75)));
-      _cg77 = VSense;
-      g78 =(g77&&_cg77);
-      if(g78){
-         AVI_stop =(AVI_stop||1);
-      }
-      g69 =(g67&&(!(_cg67)));
-      _cg69 = VSense;
-      g71 =(g69&&(!(_cg69)));
-      _cg71 = VPace;
-      g72 =(g71&&_cg71);
-      if(g72){
-         AVI_stop =(AVI_stop||1);
-      }
-      g62 =(g61&&_cg61);
-      if(g62){
-         AVI_stop =(AVI_stop||1);
-      }
-      g70 =(g69&&_cg69);
-      if(g70){
-         AVI_stop =(AVI_stop||1);
-      }
-      g79 =(g77&&(!(_cg77)));
-      _cg79 = VPace;
-      g80 =(g79&&_cg79);
-      if(g80){
-         AVI_stop =(AVI_stop||1);
-      }
-      g57 =(g64||(g81&&(!(_cg81)))||g76||g78||g68||g72||g56||g62||g70||g80);
-      g59 =(g58&&_cg58);
-      if(g59){
-         AVI_start =(AVI_start||1);
-      }
-      g65 =(g63&&(!(_cg63)));
-      _cg65 = AVI_ex;
-      g73 =(g65&&(!(_cg65)));
-      _cg73 = URI_ex;
-      g82 =(g81&&_cg81);
-      if(g82){
-         AVI_start =(AVI_start||1);
-      }
-      g60 =(g59||(g73&&(!(_cg73)))||g82);
-      g66 =((g71&&(!(_cg71)))||(g65&&_cg65));
-      g74 =((g79&&(!(_cg79)))||(g73&&_cg73));
-      g84 = g1;
-      g86 =(PRE_g85);
-      g86b = g86;
-      _cg86 = AVI_start;
-      g88 =(PRE_g87);
-      _cg88 = AVI_ex;
-      g89 =(g88&&(!(_cg88)));
-      _cg89 = AVI_stop;
-      g85 =(g84||(g86b&&(!(_cg86)))||(g89&&_cg89)||(g88&&_cg88));
-      g87 =((g89&&(!(_cg89)))||(g86b&&_cg86));
-      g91 = g1;
-      g93 =(PRE_g92);
-      _cg93 = VSense;
-      g102 =(g93&&(!(_cg93)));
-      _cg102 = VPace;
-      g99 =(PRE_g98);
-      _cg99 = PVARP_ex;
-      g92 =((g102&&(!(_cg102)))||(g99&&_cg99)||g91);
-      g94 =(g93&&_cg93);
-      if(g94){
-         AEI_start =(AEI_start||1);
-      }
-      g103 =(g102&&_cg102);
-      if(g103){
-         AEI_start =(AEI_start||1);
-      }
-      g95 =(g94||(g100&&(!(_cg100)))||g103);
-      g97 =(g96&&_cg96);
-      if(g97){
-         AEI_stop =(AEI_stop||1);
-      }
-      g98 =(g97||(g99&&(!(_cg99)))||g101);
-      g105 = g1;
-      g109 =(PRE_g108);
-      _cg109 = AEI_ex;
-      g110 =(g109&&(!(_cg109)));
-      _cg110 = AEI_stop;
-      g107 =(PRE_g106);
-      g107b = g107;
-      _cg107 = AEI_start;
-      g106 =(g105||(g110&&_cg110)||(g107b&&(!(_cg107)))||(g109&&_cg109));
-      g108 =((g107b&&_cg107)||(g110&&(!(_cg110))));
-      g112 = g1;
-      g117 =(PRE_g116);
-      _cg117 = PVARP_ex;
-      g114 =(PRE_g113);
-      _cg114 = VSense;
-      g118 =(g114&&(!(_cg114)));
-      _cg118 = VPace;
-      g113 =((g117&&_cg117)||g112||(g118&&(!(_cg118))));
-      g115 =(g114&&_cg114);
-      if(g115){
-         PVARP_start =(PVARP_start||1);
-      }
-      g119 =(g118&&_cg118);
-      if(g119){
-         PVARP_start =(PVARP_start||1);
-      }
-      g116 =(g119||g115||(g117&&(!(_cg117))));
-      g121 = g1;
-      g125 =(PRE_g124);
-      _cg125 = PVARP_ex;
-      g123 =(PRE_g122);
-      g123b = g123;
-      _cg123 = PVARP_start;
-      g126 =(g125&&(!(_cg125)));
-      _cg126 = PVARP_stop;
-      g122 =(g121||(g125&&_cg125)||(g123b&&(!(_cg123)))||(g126&&_cg126));
-      g124 =((g123b&&_cg123)||(g126&&(!(_cg126))));
-      g15_e1 =(!((g4||g7||g9||g12)));
-      g25_e2 =(!((g18||g21)));
-      g32_e3 =(!((g28||g30)));
-      g39_e4 =(!((g35||g37)));
-      g48_e5 =(!((g42||g45)));
-      g55_e6 =(!((g51||g53)));
-      g83_e7 =(!((g58||g61||g67||g75)));
-      g90_e8 =(!((g86||g88)));
-      g104_e9 =(!((g93||g96||g99)));
-      g111_e10 =(!((g107||g109)));
-      g120_e11 =(!((g114||g117)));
-      g127_e12 =(!((g123||g125)));
-      g128_fix0 =((g15_e1||g15)&&(g25_e2||g25)&&(g32_e3||g32)&&(g39_e4||g39));
-      g128_fix1 =(g128_fix0&&(g48_e5||g48)&&(g55_e6||g55)&&(g83_e7||g83));
-      g128_fix2 =(g15||g25||g32||g39);
-      g128_fix3 =(g128_fix2||g48||g55||g83);
-      g128_e1_fix_fix =(g109||g125||g7||g21||g45||g61||g96||g117||g9||g99||g67);
-      g128_e1_fix =(g93||g107||g114||g123||g30||g37||g53||g88||g12||g128_e1_fix_fix);
-      g128_e1 =(!((g4||g18||g28||g35||g42||g51||g58||g86||g75||g128_e1_fix)));
-      g132_e2 =(!(g131));
-   }
-   PRE_g3 = g3;
-   PRE_g6 = g6;
-   PRE_g8 = g8;
-   PRE_g11 = g11;
-   PRE_g17 = g17;
-   PRE_g20 = g20;
-   PRE_g27 = g27;
-   PRE_g29 = g29;
-   PRE_g34 = g34;
-   PRE_g36 = g36;
-   PRE_g41 = g41;
-   PRE_g44 = g44;
-   PRE_g50 = g50;
-   PRE_g52 = g52;
-   PRE_g57 = g57;
-   PRE_g60 = g60;
-   PRE_g66 = g66;
-   PRE_g74 = g74;
-   PRE_g85 = g85;
-   PRE_g87 = g87;
-   PRE_g92 = g92;
-   PRE_g95 = g95;
-   PRE_g98 = g98;
-   PRE_g106 = g106;
-   PRE_g108 = g108;
-   PRE_g113 = g113;
-   PRE_g116 = g116;
-   PRE_g122 = g122;
-   PRE_g124 = g124;
-   PRE_g130 = g130;
-   _PRE_GO = _GO;
-   return;
+void tick() {
+	if (_PRE_GO == 1) {
+		_GO = 0;
+	}
+	{
+		g0 = _GO;
+		g1 = g0;
+		g2 = g1;
+		g150 = (PRE_g149);
+		g148 = g0;
+		g149 = (g150 || g148);
+		if (g149) {
+			VPace = 0;
+			APace = 0;
+			LRI_start = 0;
+			LRI_stop = 0;
+			URI_start = 0;
+			URI_stop = 0;
+			VRP_start = 0;
+			VRP_stop = 0;
+			AVI_start = 0;
+			AVI_stop = 0;
+			AEI_start = 0;
+			AEI_stop = 0;
+			PVARP_start = 0;
+			PVARP_stop = 0;
+		}
+		g86 = (PRE_g85);
+		_cg86 = URI_ex;
+		g87 = (g86 && _cg86);
+		if (g87) {
+			VPace = (VPace || 1);
+		}
+		g94 = (PRE_g93);
+		_cg94 = AVI_ex;
+		g95 = (g94 && _cg94);
+		if (g95) {
+			VPace = (VPace || 1);
+		}
+		g4 = (PRE_g3);
+		_cg4 = VSense;
+		g17 = (g4 && (!(_cg4)));
+		_cg17 = VPace;
+		g3 = (g2 || (g17 && (!(_cg17))));
+		g5 = (g4 && _cg4);
+		if (g5) {
+			LRI_start = (LRI_start || 1);
+		}
+		g7 = (PRE_g6);
+		_cg7 = VRP_ex;
+		g18 = (g17 && _cg17);
+		if (g18) {
+			LRI_start = (LRI_start || 1);
+		}
+		g12 = (PRE_g11);
+		g12b = g12;
+		if (g12b) {
+			LRI_start = (LRI_start || 1);
+		}
+		g6 = ((g7 && (!(_cg7))) || g18 || g5 || g12b);
+		g9 = (PRE_g8);
+		_cg9 = VSense;
+		g13 = (g9 && (!(_cg9)));
+		_cg13 = VPace;
+		g15 = (g13 && (!(_cg13)));
+		_cg15 = LRI_ex;
+		g8 = ((g7 && _cg7) || (g15 && (!(_cg15))));
+		g10 = (g9 && _cg9);
+		if (g10) {
+			LRI_stop = (LRI_stop || 1);
+		}
+		g14 = (g13 && _cg13);
+		if (g14) {
+			LRI_stop = (LRI_stop || 1);
+		}
+		g16 = (g15 && _cg15);
+		if (g16) {
+			VPace = (VPace || 1);
+		}
+		g11 = (g14 || g16 || g10);
+		g20 = g1;
+		g22 = (PRE_g21);
+		_cg22 = VSense;
+		g42 = (g22 && (!(_cg22)));
+		_cg42 = VPace;
+		g25 = (PRE_g24);
+		_cg25 = URI_ex;
+		g26 = (g25 && _cg25);
+		if (g26) {
+			URI_stop = (URI_stop || 1);
+		}
+		g29 = (PRE_g28);
+		_cg29 = URI_ex;
+		g30 = (g29 && _cg29);
+		if (g30) {
+			URI_stop = (URI_stop || 1);
+		}
+		g34 = (PRE_g33);
+		_cg34 = VSense;
+		g37 = (g34 && (!(_cg34)));
+		_cg37 = URI_ex;
+		g38 = (g37 && _cg37);
+		if (g38) {
+			URI_stop = (URI_stop || 1);
+		}
+		g21 = (g20 || (g42 && (!(_cg42))) || g26 || g30 || g38);
+		g23 = (g22 && _cg22);
+		if (g23) {
+			URI_start = (URI_start || 1);
+		}
+		g27 = (g25 && (!(_cg25)));
+		_cg27 = PVARP_ex;
+		g41 = (g27 && (!(_cg27)));
+		_cg41 = VRP_ex;
+		g43 = (g42 && _cg42);
+		if (g43) {
+			URI_start = (URI_start || 1);
+		}
+		g36 = (PRE_g35);
+		g36b = g36;
+		if (g36b) {
+			URI_start = (URI_start || 1);
+		}
+		g24 = (g23 || (g41 && (!(_cg41))) || g43 || g36b);
+		g31 = (g29 && (!(_cg29)));
+		_cg31 = VRP_ex;
+		g39 = (g31 && (!(_cg31)));
+		_cg39 = PVARP_ex;
+		g28 = ((g27 && _cg27) || (g39 && (!(_cg39))) || (g41 && _cg41));
+		g32 = (g31 && _cg31);
+		if (g32) {
+			URI_stop = (URI_stop || 1);
+		}
+		g40 = (g39 && _cg39);
+		if (g40) {
+			URI_stop = (URI_stop || 1);
+		}
+		g33 = ((g37 && (!(_cg37))) || g32 || g40);
+		g35 = (g34 && _cg34);
+		if (g35) {
+			URI_stop = (URI_stop || 1);
+		}
+		g45 = g1;
+		g49 = (PRE_g48);
+		g49b = g49;
+		_cg49 = LRI_stop;
+		g50 = (g49b && (!(_cg49)));
+		_cg50 = LRI_ex;
+		g47 = (PRE_g46);
+		g47b = g47;
+		_cg47 = LRI_start;
+		g46 =
+				((g49b && _cg49) || (g50 && _cg50) || g45
+						|| (g47b && (!(_cg47))));
+		g48 = ((g47b && _cg47) || (g50 && (!(_cg50))));
+		g52 = g1;
+		g56 = (PRE_g55);
+		g56b = g56;
+		_cg56 = URI_stop;
+		g57 = (g56b && (!(_cg56)));
+		_cg57 = URI_ex;
+		g54 = (PRE_g53);
+		g54b = g54;
+		_cg54 = URI_start;
+		g53 =
+				((g56b && _cg56) || (g57 && _cg57) || g52
+						|| (g54b && (!(_cg54))));
+		g55 = ((g54b && _cg54) || (g57 && (!(_cg57))));
+		g59 = g1;
+		g64 = (PRE_g63);
+		_cg64 = VRP_ex;
+		g61 = (PRE_g60);
+		g61b = g61;
+		_cg61 = VPace;
+		g65 = (g61b && (!(_cg61)));
+		_cg65 = VSense;
+		g60 = ((g64 && _cg64) || (g65 && (!(_cg65))) || g59);
+		g62 = (g61b && _cg61);
+		if (g62) {
+			VRP_start = (VRP_start || 1);
+		}
+		g66 = (g65 && _cg65);
+		if (g66) {
+			VRP_start = (VRP_start || 1);
+		}
+		g63 = ((g64 && (!(_cg64))) || g66 || g62);
+		g68 = g1;
+		g70 = (PRE_g69);
+		g70b = g70;
+		_cg70 = VRP_start;
+		g72 = (PRE_g71);
+		_cg72 = VRP_ex;
+		g73 = (g72 && (!(_cg72)));
+		_cg73 = VRP_stop;
+		g69 = (g68 || (g70b && (!(_cg70))) || (g72 && _cg72) || (g73 && _cg73));
+		g71 = ((g70b && _cg70) || (g73 && (!(_cg73))));
+		g75 = g1;
+		g96 = (g94 && (!(_cg94)));
+		_cg96 = VSense;
+		g97 = (g96 && _cg96);
+		if (g97) {
+			AVI_stop = (AVI_stop || 1);
+		}
+		g98 = (g96 && (!(_cg96)));
+		_cg98 = VPace;
+		g99 = (g98 && _cg98);
+		if (g99) {
+			AVI_stop = (AVI_stop || 1);
+		}
+		g80 = (PRE_g79);
+		_cg80 = VSense;
+		g81 = (g80 && _cg80);
+		if (g81) {
+			AVI_stop = (AVI_stop || 1);
+		}
+		g117 = (PRE_g116);
+		_cg117 = ASense;
+		g119 = (g117 && (!(_cg117)));
+		_cg119 = AEI_ex;
+		g120 = (g119 && _cg119);
+		if (g120) {
+			APace = (APace || 1);
+		}
+		g77 = (PRE_g76);
+		_cg77 = ASense;
+		g100 = (g77 && (!(_cg77)));
+		_cg100 = APace;
+		g88 = (g86 && (!(_cg86)));
+		_cg88 = VSense;
+		g90 = (g88 && (!(_cg88)));
+		_cg90 = VPace;
+		g91 = (g90 && _cg90);
+		if (g91) {
+			AVI_stop = (AVI_stop || 1);
+		}
+		g82 = (g80 && (!(_cg80)));
+		_cg82 = VPace;
+		g83 = (g82 && _cg82);
+		if (g83) {
+			AVI_stop = (AVI_stop || 1);
+		}
+		g89 = (g88 && _cg88);
+		if (g89) {
+			AVI_stop = (AVI_stop || 1);
+		}
+		g76 = (g75 || g97 || g99 || g81 || g87 || (g100 && (!(_cg100))) || g91
+				|| g95 || g83 || g89);
+		g78 = (g77 && _cg77);
+		if (g78) {
+			AVI_start = (AVI_start || 1);
+		}
+		g101 = (g100 && _cg100);
+		if (g101) {
+			AVI_start = (AVI_start || 1);
+		}
+		g84 = (g82 && (!(_cg82)));
+		_cg84 = AVI_ex;
+		g92 = (g84 && (!(_cg84)));
+		_cg92 = URI_ex;
+		g79 = (g101 || (g92 && (!(_cg92))) || g78);
+		g85 = ((g84 && _cg84) || (g90 && (!(_cg90))));
+		g93 = ((g92 && _cg92) || (g98 && (!(_cg98))));
+		g103 = g1;
+		g107 = (PRE_g106);
+		_cg107 = AVI_ex;
+		g108 = (g107 && (!(_cg107)));
+		_cg108 = AVI_stop;
+		g105 = (PRE_g104);
+		g105b = g105;
+		_cg105 = AVI_start;
+		g104 = ((g108 && _cg108) || g103 || (g107 && _cg107)
+				|| (g105b && (!(_cg105))));
+		g106 = ((g105b && _cg105) || (g108 && (!(_cg108))));
+		g110 = g1;
+		g112 = (PRE_g111);
+		_cg112 = VSense;
+		g121 = (g112 && (!(_cg112)));
+		_cg121 = VPace;
+		g118 = (g117 && _cg117);
+		if (g118) {
+			AEI_stop = (AEI_stop || 1);
+		}
+		g111 = (g110 || g120 || (g121 && (!(_cg121))) || g118);
+		g113 = (g112 && _cg112);
+		if (g113) {
+			AEI_start = (AEI_start || 1);
+		}
+		g122 = (g121 && _cg121);
+		if (g122) {
+			AEI_start = (AEI_start || 1);
+		}
+		g115 = (PRE_g114);
+		_cg115 = PVARP_ex;
+		g114 = (g113 || g122 || (g115 && (!(_cg115))));
+		g116 = ((g115 && _cg115) || (g119 && (!(_cg119))));
+		g124 = g1;
+		g128 = (PRE_g127);
+		_cg128 = AEI_ex;
+		g126 = (PRE_g125);
+		g126b = g126;
+		_cg126 = AEI_start;
+		g129 = (g128 && (!(_cg128)));
+		_cg129 = AEI_stop;
+		g125 = ((g128 && _cg128) || (g126b && (!(_cg126))) || (g129 && _cg129)
+				|| g124);
+		g127 = ((g126b && _cg126) || (g129 && (!(_cg129))));
+		g131 = g1;
+		g136 = (PRE_g135);
+		_cg136 = PVARP_ex;
+		g133 = (PRE_g132);
+		_cg133 = VSense;
+		g137 = (g133 && (!(_cg133)));
+		_cg137 = VPace;
+		g132 = ((g136 && _cg136) || g131 || (g137 && (!(_cg137))));
+		g134 = (g133 && _cg133);
+		if (g134) {
+			PVARP_start = (PVARP_start || 1);
+		}
+		g138 = (g137 && _cg137);
+		if (g138) {
+			PVARP_start = (PVARP_start || 1);
+		}
+		g135 = ((g136 && (!(_cg136))) || g138 || g134);
+		g140 = g1;
+		g144 = (PRE_g143);
+		_cg144 = PVARP_ex;
+		g145 = (g144 && (!(_cg144)));
+		_cg145 = PVARP_stop;
+		g142 = (PRE_g141);
+		g142b = g142;
+		_cg142 = PVARP_start;
+		g141 = ((g144 && _cg144) || g140 || (g145 && _cg145)
+				|| (g142b && (!(_cg142))));
+		g143 = ((g142b && _cg142) || (g145 && (!(_cg145))));
+		g19_e1 = (!((g4 || g7 || g9 || g12)));
+		g44_e2 = (!((g22 || g25 || g29 || g34 || g36)));
+		g51_e3 = (!((g47 || g49)));
+		g58_e4 = (!((g54 || g56)));
+		g67_e5 = (!((g61 || g64)));
+		g74_e6 = (!((g70 || g72)));
+		g102_e7 = (!((g77 || g80 || g86 || g94)));
+		g109_e8 = (!((g105 || g107)));
+		g123_e9 = (!((g112 || g115 || g117)));
+		g130_e10 = (!((g126 || g128)));
+		g139_e11 = (!((g133 || g136)));
+		g146_e12 = (!((g142 || g144)));
+		g147_fix0 = ((g19_e1 || g19) && (g44_e2 || g44) && (g51_e3 || g51)
+				&& (g58_e4 || g58));
+		g147_fix1 = (g147_fix0 && (g67_e5 || g67) && (g74_e6 || g74)
+				&& (g102_e7 || g102));
+		g147_fix2 = (g19 || g44 || g51 || g58);
+		g147_fix3 = (g147_fix2 || g67 || g74 || g102);
+		g147_e1_fix_fix = (g128 || g144 || g7 || g25 || g64 || g80 || g115
+				|| g136 || g9 || g117 || g29 || g86 || g12 || g94);
+		g147_e1_fix = (g112 || g126 || g133 || g142 || g49 || g56 || g72 || g107
+				|| g34 || g147_e1_fix_fix);
+		g147_e1 = (!((g4 || g22 || g47 || g54 || g61 || g70 || g77 || g105
+				|| g36 || g147_e1_fix)));
+		g151_e2 = (!(g150));
+	}
+	PRE_g3 = g3;
+	PRE_g6 = g6;
+	PRE_g8 = g8;
+	PRE_g11 = g11;
+	PRE_g21 = g21;
+	PRE_g24 = g24;
+	PRE_g28 = g28;
+	PRE_g33 = g33;
+	PRE_g35 = g35;
+	PRE_g46 = g46;
+	PRE_g48 = g48;
+	PRE_g53 = g53;
+	PRE_g55 = g55;
+	PRE_g60 = g60;
+	PRE_g63 = g63;
+	PRE_g69 = g69;
+	PRE_g71 = g71;
+	PRE_g76 = g76;
+	PRE_g79 = g79;
+	PRE_g85 = g85;
+	PRE_g93 = g93;
+	PRE_g104 = g104;
+	PRE_g106 = g106;
+	PRE_g111 = g111;
+	PRE_g114 = g114;
+	PRE_g116 = g116;
+	PRE_g125 = g125;
+	PRE_g127 = g127;
+	PRE_g132 = g132;
+	PRE_g135 = g135;
+	PRE_g141 = g141;
+	PRE_g143 = g143;
+	PRE_g149 = g149;
+	_PRE_GO = _GO;
+	return;
 }
-
 // Example timeout values in milliseconds
-#define AVI_VALUE 600
-#define AEI_VALUE 1600
-#define PVARP_VALUE 100
-#define VRP_VALUE 300
-#define LRI_VALUE 1900
-#define URI_VALUE 1800
+#define AVI_VALUE 300
+#define AEI_VALUE 800
+#define PVARP_VALUE 50
+#define VRP_VALUE 150
+#define LRI_VALUE 950
+#define URI_VALUE 900
 
 #define ESC 27
 #define CLEAR_LCD_STRING "[2J"
@@ -395,7 +467,7 @@ int currentMode = 0;
 int prevMode = 0;
 int AVI_ticks = 0;
 int buttonValue = 1;
-int LED_timer_flag = 0;
+char *buffer;
 
 //Timers
 alt_alarm AVI_timer;
@@ -404,7 +476,6 @@ alt_alarm LRI_timer;
 alt_alarm URI_timer;
 alt_alarm PVARP_timer;
 alt_alarm VRP_timer;
-alt_alarm LED_timer;
 
 //Input Flags
 //So Inputs won't change mid-tick
@@ -418,10 +489,33 @@ int URI_ex_flag = 0;
 int PVARP_ex_flag = 0;
 int VRP_ex_flag = 0;
 
-alt_u32 LED_timer_ISR(void* context) {
-	IOWR_ALTERA_AVALON_PIO_DATA(LEDS_GREEN_BASE, 0);
-	LED_timer_flag = 0;
-	return 0;
+//Tick counts
+int count1;
+int count2;
+int tps;
+
+int fd;
+
+void UART_receiver() {
+	read(fd, buffer, 1);
+	if (*buffer == 'V') {
+		VSense_flag = 1;
+	} else if (*buffer == 'A') {
+		ASense_flag = 1;
+	}
+	*buffer = 0;
+	return;
+}
+
+void UART_send() {
+	if (VPace == 1) {
+		*buffer = 'V';
+		write(fd, buffer, 1);
+	} else if (APace == 1) {
+		*buffer = 'A';
+		write(fd, buffer, 1);
+	}
+	return;
 }
 
 alt_u32 AVI_timer_ISR(void* context) {
@@ -596,17 +690,22 @@ int setLights() {
 	} else {
 		IOWR_ALTERA_AVALON_PIO_DATA(LEDS_GREEN_BASE, 0);
 	}
-	// Keep LEDs on for 50ms
-	/*if (LED_timer_flag = 0) {
-	 alt_alarm_start(&LED_timer, LED_TIMEOUT, LED_timer_ISR, NULL);
-	 LED_timer_flag = 1;
-	 }*/
 	return 0;
 }
 
 int setFlags() {
-	VSense = VSense_flag;
-	ASense = ASense_flag;
+	count2 = alt_nticks();
+	if (currentMode == 1) {
+		if (count2 / tps > count1 / tps + 0.0001) {
+			count1 = alt_nticks();
+			VSense = VSense_flag;
+			ASense = ASense_flag;
+		}
+	} else {
+		VSense = VSense_flag;
+		ASense = ASense_flag;
+	}
+
 	//Timer_ex_flag:
 	AVI_ex = AVI_ex_flag;
 	AEI_ex = AEI_ex_flag;
@@ -624,6 +723,7 @@ int setFlags() {
 	VRP_ex_flag = 0;
 	return 0;
 }
+
 int clearFlags() {
 	VSense = 0;
 	ASense = 0;
@@ -637,13 +737,23 @@ int clearFlags() {
 }
 
 int main(void) {
+	count1 = alt_nticks();
+	tps = alt_ticks_per_second();
 	//init_buttons_pio();
+	fd = open(UART_NAME, O_NONBLOCK | O_RDWR);
 	reset();
+	tick();
 	while (1) {
 		//Poll Switches for Mode Change
 		switch_check();
 		//Poll Buttons for Input Flags
-		poll_buttons();
+		if (currentMode == 1) {
+			poll_buttons();
+		}
+		// UART Receive for Mode 2
+		if (currentMode == 2) {
+			UART_receiver();
+		}
 		// Update Flags in the SCCharts code
 		setFlags();
 		// Poll timers in SCCharts code
@@ -652,6 +762,10 @@ int main(void) {
 		setLights();
 		// Tick!
 		tick();
+		// UART Send for Mode 2
+		if (currentMode == 2) {
+			UART_send();
+		}
 		// Clear Inputs
 		clearFlags();
 	}
