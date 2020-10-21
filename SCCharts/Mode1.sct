@@ -1,5 +1,5 @@
 //VVI Pacemaker SCCharts
-scchart Mode1 {
+ scchart Mode1 {
   input signal VSense, ASense;
   output signal VPace, APace;
   output signal LRI_start, LRI_stop;
@@ -15,14 +15,15 @@ scchart Mode1 {
     region LRI:
 
     initial state init
-    --> waitVRP with VSense / LRI_start;
-
+    --> waitVRP with VSense / LRI_start
+    --> waitVRP with VPace / LRI_start;
 
     state waitVRP
     --> waitLRI with VRP_ex;
 
     state waitLRI
     --> reInit with VSense / LRI_stop
+    --> reInit with VPace / LRI_stop
     --> reInit with LRI_ex / VPace;
 
     state reInit
@@ -32,10 +33,24 @@ scchart Mode1 {
 
     initial state init
     --> waitURI with VSense / URI_start
-	--> waitURI with VPace / URI_start;
+    --> waitURI with VPace / URI_start;
 
     state waitURI
+    --> init with URI_ex / URI_stop
+    --> e1 with PVARP_ex
+    --> e1 with VRP_ex;
+
+    state e1
+    --> init with URI_ex / URI_stop
+    --> e2 with VRP_ex / URI_stop
+    --> e2 with PVARP_ex / URI_stop;
+
+    state e2
+    --> REinit with VSense / URI_stop
     --> init with URI_ex / URI_stop;
+
+    state REinit
+    --> waitURI with / URI_start;
 
     region LRI_timer:
 
@@ -89,11 +104,11 @@ scchart Mode1 {
     --> idle with URI_ex / VPace
     --> idle with VSense / AVI_stop
     --> idle with VPace / AVI_stop;
-    
+
     state e2
-    -->idle with AVI_ex /VPace
-    -->idle with VSense / AVI_stop
-    -->idle with VPace / AVI_stop;
+    --> idle with AVI_ex / VPace
+    --> idle with VSense / AVI_stop
+    --> idle with VPace / AVI_stop;
 
     region AVI_timer:
 
@@ -107,15 +122,15 @@ scchart Mode1 {
     region AEI:
 
     initial state idle
-    --> waitAEI with VSense / AEI_start
-    --> waitAEI with VPace / AEI_start;
-
-    state waitAEI
-    --> waitPVARP with ASense / AEI_stop
-    --> waitPVARP with AEI_ex / APace;
+    --> waitPVARP with VSense / AEI_start
+    --> waitPVARP with VPace / AEI_start;
 
     state waitPVARP
-    --> idle with PVARP_ex;
+    --> waitAEI with PVARP_ex;
+
+    state waitAEI
+    --> idle with ASense / AEI_stop
+    --> idle with AEI_ex / APace;
 
     region AEI_timer:
 
